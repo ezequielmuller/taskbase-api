@@ -5,7 +5,7 @@
   <artifactId>taskflow-kanban</artifactId>
   <packaging>war</packaging>
   <version>1.0-SNAPSHOT</version>
-  <name>taskflow-kanban Maven Webapp</name>
+  <name>com.taskflow-kanban Maven Webapp</name>
   <url>http://maven.apache.org</url>
   <dependencies>
     <dependency>
@@ -16,6 +16,6 @@
     </dependency>
   </dependencies>
   <build>
-    <finalName>taskflow-kanban</finalName>
+    <finalName>com.taskflow-kanban</finalName>
   </build>
 </project>
