@@ -1,10 +1,10 @@
 package com.taskflow.modelo;
 
-public class usuarioXprojeto {
+public class UsuarioXProjeto {
   private Integer fk_usuario;
   private Integer fk_projeto;
 
-  public usuarioXprojeto(Integer fk_usuario, Integer fk_projeto) {
+  public UsuarioXProjeto(Integer fk_usuario, Integer fk_projeto) {
     this.fk_usuario = fk_usuario;
     this.fk_projeto = fk_projeto;
   }

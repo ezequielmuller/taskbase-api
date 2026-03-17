@@ -2,7 +2,7 @@ package com.taskflow.modelo;
 
 import java.sql.Timestamp;
 
-public class tarefa {
+public class Tarefa {
   private Integer ta_id;
   private Timestamp ta_data_criacao;
   private Timestamp ta_data_finalizacao;
@@ -11,7 +11,7 @@ public class tarefa {
   private Integer fk_usuario;
   private Integer fk_grupo;
 
-  public tarefa(Integer ta_id, Timestamp ta_data_criacao, Timestamp ta_data_finalizacao, String ta_titulo,
+  public Tarefa(Integer ta_id, Timestamp ta_data_criacao, Timestamp ta_data_finalizacao, String ta_titulo,
                 String ta_descricao, Integer fk_usuario, Integer fk_grupo) {
     this.ta_id = ta_id;
     this.ta_data_criacao = ta_data_criacao;

@@ -1,15 +1,14 @@
 package com.taskflow.modelo;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 
-public class projeto {
+public class Projeto {
   private Integer pro_id;
   private String pro_nome;
   private String pro_descricao;
   private Timestamp pro_data_criacao;
 
-  public projeto(Integer pro_id, String pro_nome, String pro_descricao, Timestamp pro_data_criacao) {
+  public Projeto(Integer pro_id, String pro_nome, String pro_descricao, Timestamp pro_data_criacao) {
     this.pro_id = pro_id;
     this.pro_nome = pro_nome;
     this.pro_descricao = pro_descricao;

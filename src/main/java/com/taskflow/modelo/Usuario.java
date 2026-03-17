@@ -1,13 +1,13 @@
 package com.taskflow.modelo;
 
-public class usuario {
+public class Usuario {
   private Integer usu_id;
   private String usu_nome;
   private String usu_email;
   private String usu_senha;
   private Boolean usu_gerenciador;
 
-  public usuario(Integer usu_id, String usu_nome, String usu_email, String usu_senha, Boolean usu_gerenciador) {
+  public Usuario(Integer usu_id, String usu_nome, String usu_email, String usu_senha, Boolean usu_gerenciador) {
     this.usu_id = usu_id;
     this.usu_nome = usu_nome;
     this.usu_email = usu_email;
