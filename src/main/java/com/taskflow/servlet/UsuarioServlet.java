@@ -1,11 +1,16 @@
 package com.taskflow.servlet;
 
+import com.google.gson.Gson;
 import com.taskflow.modelo.Usuario;
 import com.taskflow.persistencia.UsuarioDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 @WebServlet("/usuario")
@@ -14,18 +19,62 @@ public class UsuarioServlet extends HttpServlet {
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
           throws ServletException, IOException {
+    try {
+      List<Usuario> usuariosList = UsuarioDAO.getInstance().listarUsuarios();
+      JSONArray jsonArray = new JSONArray(usuariosList);
 
-    response.setContentType("application/json");
-    UsuarioDAO dao = new UsuarioDAO();
-
-    try{
-      List<Usuario> usuariosList = dao.listarUsuarios();
-      System.out.println("USUARIOS" + usuariosList);
-    }catch(Exception ex){
-      System.out.println("Erro servlet: " + ex);
+      retorno(response, jsonArray.toString());
+    } catch (Exception ex) {
+      JSONObject erro = new JSONObject();
+      erro.put("status", 500);
+      erro.put("mensagem", ex.getMessage());
+      retorno(response, erro);
     }
-
   }
 
+  @Override
+  protected void doPost(HttpServletRequest request, HttpServletResponse response)
+          throws ServletException, IOException {
 
+    try {
+      StringBuilder sb = new StringBuilder();
+      String linha;
+      while ((linha = request.getReader().readLine()) != null) {
+        sb.append(linha);
+      }
+
+      JSONObject json = new JSONObject(sb.toString());
+
+      Usuario novoUsuario = UsuarioDAO.getInstance().gravarUsuario(
+              json.getString("nome"),
+              json.getString("email"),
+              json.getString("senha"),
+              json.getBoolean("gerenciador")
+      );
+
+      JSONObject resposta = new JSONObject();
+      resposta.put("mensagem", "Usuário criado");
+      resposta.put("novoUsuario", novoUsuario);
+
+      retorno(response, resposta.toString());
+
+    } catch (Exception ex) {
+      JSONObject erro = new JSONObject();
+      erro.put("status", 500);
+      erro.put("mensagem", ex.getMessage());
+      retorno(response, erro);
+    }
+  }
+
+  // formata para JSON o retorno da api
+  private void retorno(HttpServletResponse response, Object obj) throws IOException {
+    response.setContentType("application/json");
+    response.setCharacterEncoding("UTF-8");
+
+    if (obj instanceof String) {
+      response.getWriter().write((String) obj);
+    } else {
+      response.getWriter().write(obj.toString());
+    }
+  }
 }

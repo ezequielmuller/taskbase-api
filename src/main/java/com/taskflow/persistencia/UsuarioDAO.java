@@ -22,7 +22,7 @@ public class UsuarioDAO extends Conexao {
   public List<Usuario> listarUsuarios() throws SQLException {
     List<Usuario> responseUsuario = new ArrayList<>();
 
-    try (Connection con = conectar(); PreparedStatement ps = con.prepareCall(LISTAR_USUARIO)) {
+    try (Connection con = conectar(); PreparedStatement ps = con.prepareStatement(LISTAR_USUARIO)) {
       try (ResultSet rs = ps.executeQuery()) {
 
         while (rs.next()) {
@@ -37,6 +37,36 @@ public class UsuarioDAO extends Conexao {
       }
     }
     return responseUsuario;
+  }
+
+  private static final String GRAVAR_USUARIO = "insert into usuario(usu_nome, usu_email, usu_senha, usu_gerenciador) " +
+          "values (?, ?, ?, ?) RETURNING usu_id";
+
+  public Usuario gravarUsuario(String nome, String email, String senha, Boolean gerenciador) throws SQLException {
+    try (Connection con = conectar()) {
+      Usuario novoUsuario = new Usuario(0, nome, email, senha, gerenciador);
+      con.setAutoCommit(false);
+
+      try (PreparedStatement ps = con.prepareStatement(GRAVAR_USUARIO)) {
+        ps.setString(1, novoUsuario.getUsu_nome());
+        ps.setString(2, novoUsuario.getUsu_email());
+        ps.setString(3, novoUsuario.getUsu_senha());
+        ps.setBoolean(4, novoUsuario.getUsu_gerenciador());
+
+        try (ResultSet rs = ps.executeQuery()) {
+          if (rs.next()) {
+            int usuarioId = rs.getInt("usu_id");
+            novoUsuario.setUsu_id(usuarioId);
+          }
+        }
+
+        con.commit();
+      } catch (SQLException ex) {
+        con.rollback();
+        throw ex;
+      }
+      return novoUsuario;
+    }
   }
 
 
