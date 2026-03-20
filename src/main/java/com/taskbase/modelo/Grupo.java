@@ -1,4 +1,4 @@
-package com.taskflow.modelo;
+package com.taskbase.modelo;
 
 public class Grupo {
   private Integer gp_id;

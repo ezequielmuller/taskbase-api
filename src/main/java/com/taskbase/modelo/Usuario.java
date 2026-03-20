@@ -1,4 +1,4 @@
-package com.taskflow.modelo;
+package com.taskbase.modelo;
 
 public class Usuario {
   private Integer usu_id;

@@ -1,8 +1,7 @@
-package com.taskflow.servlet;
+package com.taskbase.servlet;
 
-import com.google.gson.Gson;
-import com.taskflow.modelo.Usuario;
-import com.taskflow.persistencia.UsuarioDAO;
+import com.taskbase.modelo.Usuario;
+import com.taskbase.persistencia.UsuarioDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
@@ -10,7 +9,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 
 @WebServlet("/usuario")

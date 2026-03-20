@@ -1,6 +1,6 @@
-package com.taskflow.persistencia;
+package com.taskbase.persistencia;
 
-import com.taskflow.modelo.Usuario;
+import com.taskbase.modelo.Usuario;
 
 import java.sql.*;
 import java.util.ArrayList;

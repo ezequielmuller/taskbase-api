@@ -1,4 +1,4 @@
-package com.taskflow.modelo;
+package com.taskbase.modelo;
 
 public class UsuarioXProjeto {
   private Integer fk_usuario;
