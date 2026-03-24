@@ -5,14 +5,15 @@ public class Usuario {
   private String usu_nome;
   private String usu_email;
   private String usu_senha;
-  private Boolean usu_gerenciador;
 
-  public Usuario(Integer usu_id, String usu_nome, String usu_email, String usu_senha, Boolean usu_gerenciador) {
+  public Usuario(Integer usu_id, String usu_nome, String usu_email, String usu_senha) {
     this.usu_id = usu_id;
     this.usu_nome = usu_nome;
     this.usu_email = usu_email;
     this.usu_senha = usu_senha;
-    this.usu_gerenciador = usu_gerenciador;
+  }
+
+  public Usuario() {
   }
 
   public Integer getUsu_id() {
@@ -47,11 +48,4 @@ public class Usuario {
     this.usu_senha = usu_senha;
   }
 
-  public Boolean getUsu_gerenciador() {
-    return usu_gerenciador;
-  }
-
-  public void setUsu_gerenciador(Boolean usu_gerenciador) {
-    this.usu_gerenciador = usu_gerenciador;
-  }
 }

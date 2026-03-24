@@ -12,7 +12,7 @@ public class Conexao {
 
   public Connection conectar() throws SQLException {
     Connection con = DriverManager.getConnection(URL, USUARIO, SENHA);
-    System.out.println("> Banco de dados postgres conectado");
+   // System.out.println("> Banco de dados postgres conectado");
     return con;
   }
 }

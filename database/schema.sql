@@ -10,7 +10,6 @@ CREATE TABLE usuario
     usu_nome        VARCHAR(100) NOT NULL,
     usu_email       VARCHAR(100) NOT NULL UNIQUE,
     usu_senha       VARCHAR(100) NOT NULL,
-    usu_gerenciador BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE projeto
@@ -59,8 +58,9 @@ CREATE TABLE usuario_projeto
 (
     fk_usuario INTEGER,
     fk_projeto INTEGER,
+    up_gerenciador BOOLEAN DEFAULT FALSE
 
-    PRIMARY KEY (fk_usuario, fk_projeto),
+        PRIMARY KEY (fk_usuario, fk_projeto),
 
     CONSTRAINT fk_usuario_projeto_usuario
         FOREIGN KEY (fk_usuario)

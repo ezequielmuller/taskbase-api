@@ -28,8 +28,7 @@ public class UsuarioDAO extends Conexao {
         while (rs.next()) {
           Usuario rsUsuario = new Usuario(
                   rs.getInt("usu_id"), rs.getString("usu_nome"),
-                  rs.getString("usu_email"), rs.getString("usu_senha"),
-                  rs.getBoolean("usu_gerenciador")
+                  rs.getString("usu_email"), rs.getString("usu_senha")
           );
 
           responseUsuario.add(rsUsuario);
@@ -39,24 +38,51 @@ public class UsuarioDAO extends Conexao {
     return responseUsuario;
   }
 
-  private static final String GRAVAR_USUARIO = "insert into usuario(usu_nome, usu_email, usu_senha, usu_gerenciador) " +
-          "values (?, ?, ?, ?) RETURNING usu_id";
+  private static final String LISTAR_USUARIO_POR_ID = """
+          SELECT * FROM usuario WHERE usu_id = ?
+          """;
 
-  public Usuario gravarUsuario(String nome, String email, String senha, Boolean gerenciador) throws SQLException {
+  public Usuario listarUsuarioPorId(Integer usuarioId) throws SQLException {
     try (Connection con = conectar()) {
       con.setAutoCommit(false);
-      Usuario novoUsuario = new Usuario(0, nome, email, senha, gerenciador);
+      Usuario usuarioEncontrado = new Usuario();
+      try (PreparedStatement ps = con.prepareStatement(LISTAR_USUARIO_POR_ID)) {
+        ps.setInt(1, usuarioId);
+
+        try (ResultSet rs = ps.executeQuery()) {
+          while (rs.next()) {
+            usuarioEncontrado.setUsu_id(rs.getInt("usu_id"));
+            usuarioEncontrado.setUsu_nome(rs.getString("usu_nome"));
+            usuarioEncontrado.setUsu_email(rs.getString("usu_email"));
+          }
+        }
+      } catch (SQLException ex) {
+        con.rollback();
+        throw ex;
+      }
+
+      return usuarioEncontrado;
+    }
+  }
+
+  private static final String GRAVAR_USUARIO = """
+          INSERT INTO usuario(usu_nome, usu_email, usu_senha) VALUES (?, ?, ?) RETURNING usu_id
+          """;
+
+  public Usuario gravarUsuario(String nome, String email, String senha) throws SQLException {
+    try (Connection con = conectar()) {
+      con.setAutoCommit(false);
+      Usuario usuarioCadastrado = new Usuario(0, nome, email, senha);
 
       try (PreparedStatement ps = con.prepareStatement(GRAVAR_USUARIO)) {
-        ps.setString(1, novoUsuario.getUsu_nome());
-        ps.setString(2, novoUsuario.getUsu_email());
-        ps.setString(3, novoUsuario.getUsu_senha());
-        ps.setBoolean(4, novoUsuario.getUsu_gerenciador());
+        ps.setString(1, usuarioCadastrado.getUsu_nome());
+        ps.setString(2, usuarioCadastrado.getUsu_email());
+        ps.setString(3, usuarioCadastrado.getUsu_senha());
 
         try (ResultSet rs = ps.executeQuery()) {
           if (rs.next()) {
             int usuarioId = rs.getInt("usu_id");
-            novoUsuario.setUsu_id(usuarioId);
+            usuarioCadastrado.setUsu_id(usuarioId);
           }
         }
 
@@ -65,8 +91,57 @@ public class UsuarioDAO extends Conexao {
         con.rollback();
         throw ex;
       }
-      return novoUsuario;
+      return usuarioCadastrado;
     }
   }
 
+  private static final String EDITAR_USUARIO = """
+          UPDATE usuario SET usu_nome = ?, usu_email = ?, usu_senha = ? WHERE usu_id = ?
+          """;
+
+  public Usuario editarUsuario(String nome, String email, String senha, Integer usuarioId) throws SQLException {
+    try (Connection con = conectar()) {
+      con.setAutoCommit(false);
+      Usuario usuarioEditado = new Usuario(usuarioId, nome, email, senha);
+
+      try (PreparedStatement ps = con.prepareStatement(EDITAR_USUARIO)) {
+        ps.setString(1, usuarioEditado.getUsu_nome());
+        ps.setString(2, usuarioEditado.getUsu_email());
+        ps.setString(3, usuarioEditado.getUsu_senha());
+        ps.setInt(4, usuarioEditado.getUsu_id());
+        ps.executeUpdate();
+
+        con.commit();
+      } catch (SQLException ex) {
+        con.rollback();
+        throw ex;
+      }
+
+      return usuarioEditado;
+    }
+  }
+
+  private static final String DELETAR_USUARIO = """
+          DELETE FROM usuario WHERE usu_id = ?
+          """;
+
+  public String deletarUsuario(Integer usuarioId) throws SQLException {
+    try (Connection con = conectar()) {
+      con.setAutoCommit(false);
+      String resposta = "";
+
+      try (PreparedStatement ps = con.prepareStatement(DELETAR_USUARIO)) {
+        ps.setInt(1, usuarioId);
+        ps.executeUpdate();
+
+        resposta = "Usuário deletado com sucesso!";
+        con.commit();
+      } catch (SQLException ex) {
+        con.rollback();
+        throw ex;
+      }
+
+      return resposta;
+    }
+  }
 }
