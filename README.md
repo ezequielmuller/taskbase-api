@@ -31,8 +31,9 @@ taskbase-api/
 │       │       ├── modelo/                # Entidades/Classes
 │       │       └── servlet/               # Servlets
 │       └── webapp/
-│           └── WEB-INF/
-│               └── web.xml
+│           ├── WEB-INF/
+│           |   └── web.xml
+|           └── index.jsp
 ├── pom.xml
 └── README.md
 ```
@@ -41,11 +42,11 @@ taskbase-api/
 
 ### Entidades
 
-- **`usuario`** — Usuários do sistema (pode ser gerenciador), que irão participar das atividades.
-- **`projeto`** — Projetos disponíveis na plataforma.
-- **`grupo`** — Colunas do Kanban (ex: *A Fazer*, *Em Progresso*, *Concluído*)
-- **`tarefas`** — Cards/tarefas atribuídas a usuários dentro de grupos
-- **`usuario_projeto`** — Relacionamento N:N entre usuários e projetos
+- **`usuario`** - Usuários do sistema (pode ser gerenciador), que irão participar das atividades.
+- **`projeto`** - Projetos disponíveis na plataforma.
+- **`grupo`** - Colunas do Kanban (ex: *A Fazer*, *Em Progresso*, *Concluído*)
+- **`tarefas`** - Cards/tarefas atribuídas a usuários dentro de grupos
+- **`usuario_projeto`** - Relacionamento N:N entre usuários e projetos
 
 ## Configuração e Execução
 
