@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
-@WebServlet("/usuario/*")
+@WebServlet("/usuarios/*")
 public class UsuarioServlet extends BaseServlet {
 
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -25,11 +25,18 @@ public class UsuarioServlet extends BaseServlet {
       if (pathInfo != null && pathInfo.matches("/\\d+")) {
         Integer usuarioId = Integer.parseInt(pathInfo.substring(1));
         Usuario usuarioEncontrado = UsuarioDAO.getInstance().listarUsuarioPorId(usuarioId);
+
+        if (usuarioEncontrado == null) {
+          retornarErro(response, HttpServletResponse.SC_NOT_FOUND, "Usuário não encontrado");
+          return;
+        }
+
         retorno(response, HttpServletResponse.SC_OK, new JSONObject(usuarioEncontrado));
         return;
       } else {
         try {
           List<Usuario> usuariosList = UsuarioDAO.getInstance().listarUsuarios();
+
           retorno(response, HttpServletResponse.SC_OK, new JSONArray(usuariosList));
         } catch (Exception ex) {
           retornarErro(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ex.getMessage());
@@ -55,10 +62,31 @@ public class UsuarioServlet extends BaseServlet {
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
           throws ServletException, IOException {
     JSONObject json = lerBody(request);
+
     try {
+      if (!json.has("nome") || json.isNull("nome")) {
+        retornarErro(response, HttpServletResponse.SC_BAD_REQUEST, "Nome obrigatórios!");
+        return;
+      }
+
+      if (!json.has("email") || json.isNull("email")) {
+        retornarErro(response, HttpServletResponse.SC_BAD_REQUEST, "E-mail obrigatório!");
+        return;
+      }
+
+      if (!json.has("senha") || json.isNull("senha")) {
+        retornarErro(response, HttpServletResponse.SC_BAD_REQUEST, "Senha obrigatório!");
+        return;
+      }
+
       Usuario novoUsuario = UsuarioDAO.getInstance().gravarUsuario(json.getString("nome"), json.getString("email"), json.getString("senha"));
 
-      retorno(response, HttpServletResponse.SC_CREATED, new JSONObject(novoUsuario));
+      JSONObject obj = new JSONObject();
+      obj.put("id", novoUsuario.getUsu_id());
+      obj.put("nome", novoUsuario.getUsu_nome());
+      obj.put("email", novoUsuario.getUsu_email());
+
+      retorno(response, HttpServletResponse.SC_CREATED, obj);
     } catch (Exception ex) {
       retornarErro(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ex.getMessage());
     }
@@ -69,6 +97,26 @@ public class UsuarioServlet extends BaseServlet {
     JSONObject json = lerBody(request);
 
     try {
+      if (request.getPathInfo() == null || !request.getPathInfo().matches("/\\d+")) {
+        retornarErro(response, HttpServletResponse.SC_BAD_REQUEST, "ID inválido");
+        return;
+      }
+
+      if (!json.has("nome") || json.isNull("nome")) {
+        retornarErro(response, HttpServletResponse.SC_BAD_REQUEST, "Nome obrigatórios!");
+        return;
+      }
+
+      if (!json.has("email") || json.isNull("email")) {
+        retornarErro(response, HttpServletResponse.SC_BAD_REQUEST, "E-mail obrigatório!");
+        return;
+      }
+
+      if (!json.has("senha") || json.isNull("senha")) {
+        retornarErro(response, HttpServletResponse.SC_BAD_REQUEST, "Senha obrigatório!");
+        return;
+      }
+
       Integer usuarioId = Integer.parseInt(request.getPathInfo().substring(1));
 
       Usuario editarUsuario = UsuarioDAO.getInstance().editarUsuario(
@@ -76,7 +124,12 @@ public class UsuarioServlet extends BaseServlet {
               json.getString("senha"), usuarioId
       );
 
-      retorno(response, HttpServletResponse.SC_OK, new JSONObject(editarUsuario));
+      JSONObject obj = new JSONObject();
+      obj.put("id", editarUsuario.getUsu_id());
+      obj.put("nome", editarUsuario.getUsu_nome());
+      obj.put("email", editarUsuario.getUsu_email());
+
+      retorno(response, HttpServletResponse.SC_OK, obj);
     } catch (Exception ex) {
       retornarErro(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ex.getMessage());
     }
@@ -86,6 +139,11 @@ public class UsuarioServlet extends BaseServlet {
           throws ServletException, IOException {
 
     try {
+      if (request.getPathInfo() == null || !request.getPathInfo().matches("/\\d+")) {
+        retornarErro(response, HttpServletResponse.SC_BAD_REQUEST, "ID inválido");
+        return;
+      }
+
       Integer usuarioId = Integer.parseInt(request.getPathInfo().substring(1));
 
       String resposta = UsuarioDAO.getInstance().deletarUsuario(usuarioId);

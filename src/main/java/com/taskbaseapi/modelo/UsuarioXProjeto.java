@@ -27,11 +27,11 @@ public class UsuarioXProjeto {
     this.fk_projeto = fk_projeto;
   }
 
-  public Boolean getUp_gerenciador(){
+  public Boolean getUp_gerenciador() {
     return up_gerenciador;
   }
 
-  public void setUp_gerenciador(Boolean up_gerenciador){
+  public void setUp_gerenciador(Boolean up_gerenciador) {
     this.up_gerenciador = up_gerenciador;
   }
 }
