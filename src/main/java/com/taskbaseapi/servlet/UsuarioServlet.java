@@ -79,7 +79,8 @@ public class UsuarioServlet extends BaseServlet {
         return;
       }
 
-      Usuario novoUsuario = UsuarioDAO.getInstance().gravarUsuario(json.getString("nome"), json.getString("email"), json.getString("senha"));
+      Usuario novoUsuario = new Usuario(0, json.getString("nome"), json.getString("email"), json.getString("senha"));
+      novoUsuario = UsuarioDAO.getInstance().gravarUsuario(novoUsuario);
 
       JSONObject obj = new JSONObject();
       obj.put("id", novoUsuario.getUsu_id());
@@ -118,18 +119,11 @@ public class UsuarioServlet extends BaseServlet {
       }
 
       Integer usuarioId = Integer.parseInt(request.getPathInfo().substring(1));
+      Usuario usuarioEditado = new Usuario(usuarioId, json.getString("nome"), json.getString("email"), json.getString("senha"));
 
-      Usuario editarUsuario = UsuarioDAO.getInstance().editarUsuario(
-              json.getString("nome"), json.getString("email"),
-              json.getString("senha"), usuarioId
-      );
+      usuarioEditado = UsuarioDAO.getInstance().editarUsuario(usuarioEditado);
 
-      JSONObject obj = new JSONObject();
-      obj.put("id", editarUsuario.getUsu_id());
-      obj.put("nome", editarUsuario.getUsu_nome());
-      obj.put("email", editarUsuario.getUsu_email());
-
-      retorno(response, HttpServletResponse.SC_OK, obj);
+      retorno(response, HttpServletResponse.SC_OK, new JSONObject(usuarioEditado));
     } catch (Exception ex) {
       retornarErro(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ex.getMessage());
     }
@@ -146,8 +140,12 @@ public class UsuarioServlet extends BaseServlet {
 
       Integer usuarioId = Integer.parseInt(request.getPathInfo().substring(1));
 
-      String resposta = UsuarioDAO.getInstance().deletarUsuario(usuarioId);
-      retorno(response, HttpServletResponse.SC_OK, resposta);
+      boolean resposta = UsuarioDAO.getInstance().deletarUsuario(usuarioId);
+      if(resposta){
+        retorno(response, HttpServletResponse.SC_NO_CONTENT, null);
+      } else {
+        retornarErro(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Não foi possivel deletar usuario!");
+      }
     } catch (Exception ex) {
       retornarErro(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ex.getMessage());
     }
